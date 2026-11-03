@@ -20,11 +20,15 @@ db-reset: ## Delete local database data, start fresh and migrate
 	docker compose down -v && docker compose up -d --wait db
 	$(MAKE) migrate
 
-migrate: ## Apply pending SQL migrations in db/migrations
-	$(BACKEND) uv run python -m brave.migrate up
+migrate: ## Apply pending Alembic migrations (backend/migrations/versions)
+	$(BACKEND) uv run alembic upgrade head
 
-migrate-status: ## Show which migrations are applied
-	$(BACKEND) uv run python -m brave.migrate status
+migrate-status: ## Show the database's current migration and the latest one
+	$(BACKEND) uv run alembic current && uv run alembic heads
+
+migration: ## Create the next numbered migration: make migration name="add participant"
+	@test -n "$(name)" || (echo 'usage: make migration name="what it changes"' && exit 1)
+	$(BACKEND) uv run alembic revision -m "$(name)" --rev-id "$$(uv run python -c 'from alembic.config import Config; from alembic.script import ScriptDirectory; h = ScriptDirectory.from_config(Config("alembic.ini")).get_current_head(); print(f"{int(h or 0) + 1:04d}")')"
 
 api: ## Run the API with auto-reload on http://localhost:8000
 	$(BACKEND) uv run uvicorn brave.main:app --reload
@@ -36,4 +40,4 @@ check: ## Lint, type-check, boundary-check and test everything
 	$(BACKEND) uv run ruff check . && uv run ruff format --check . && uv run mypy && uv run lint-imports && uv run pytest
 	cd frontend && npm run lint && npm run build
 
-.PHONY: help setup db-up db-down db-reset migrate migrate-status api web check
+.PHONY: help setup db-up db-down db-reset migrate migrate-status migration api web check

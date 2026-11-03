@@ -10,14 +10,15 @@ from sqlalchemy import text
 from brave.core.config import get_settings
 from brave.core.db import org_session
 from brave.core.ids import new_id
-from brave.migrate import _plain_url
 
 pytestmark = [pytest.mark.db, pytest.mark.usefixtures("database")]
 
 
 def _owner() -> psycopg.Connection:
     settings = get_settings()
-    return psycopg.connect(_plain_url(settings.migration_database_url or settings.database_url))
+    url = settings.migration_database_url or settings.database_url
+    # psycopg wants postgresql://, SQLAlchemy uses postgresql+psycopg://.
+    return psycopg.connect(url.replace("postgresql+psycopg://", "postgresql://", 1))
 
 
 def _set_org(conn: psycopg.Connection, org: UUID) -> None:

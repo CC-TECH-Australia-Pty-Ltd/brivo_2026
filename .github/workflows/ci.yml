@@ -66,8 +66,8 @@ jobs:
 
       - name: Migrations on an empty database
         run: |
-          uv run python -m brave.migrate up
-          uv run python -m brave.migrate status
+          uv run alembic upgrade head
+          uv run alembic current
 
       - name: Tests (including tenant isolation)
         run: uv run pytest

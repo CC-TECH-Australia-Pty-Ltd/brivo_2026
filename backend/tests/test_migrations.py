@@ -1,21 +1,33 @@
 from pathlib import Path
 
+import psycopg
 import pytest
+from alembic.config import Config
+from alembic.runtime.migration import MigrationContext
+from alembic.script import ScriptDirectory
+from sqlalchemy import create_engine
 
-from brave import migrate
+from brave.core.config import get_settings
 from brave.core.ids import new_id
 
-
-def test_files_are_numbered_and_unique() -> None:
-    migrations = migrate.load_migrations()
-    assert migrations[0].name == "0001_baseline.sql"
-    assert [m.version for m in migrations] == sorted({m.version for m in migrations})
+ALEMBIC_INI = Path(__file__).resolve().parents[1] / "alembic.ini"
 
 
-def test_bad_file_name_is_rejected(tmp_path: Path) -> None:
-    (tmp_path / "1_Bad Name.sql").write_text("SELECT 1;")
-    with pytest.raises(migrate.MigrationError):
-        migrate.load_migrations(tmp_path)
+def _script() -> ScriptDirectory:
+    return ScriptDirectory.from_config(Config(ALEMBIC_INI))
+
+
+def _owner_url() -> str:
+    settings = get_settings()
+    return settings.migration_database_url or settings.database_url
+
+
+def test_revisions_are_numbered_in_one_line() -> None:
+    script = _script()
+    assert len(script.get_heads()) == 1, "Two migrations share a parent: renumber one"
+    revisions = list(reversed(list(script.walk_revisions())))
+    assert revisions[0].revision == "0001"
+    assert [r.revision for r in revisions] == [f"{i:04d}" for i in range(1, len(revisions) + 1)]
 
 
 def test_ids_are_uuid7_and_time_ordered() -> None:
@@ -26,20 +38,20 @@ def test_ids_are_uuid7_and_time_ordered() -> None:
 
 @pytest.mark.db
 @pytest.mark.usefixtures("database")
-def test_all_migrations_applied_and_rerun_is_a_no_op() -> None:
-    assert migrate.up() == []
-    assert all(is_applied for _, is_applied in migrate.status())
+def test_database_is_at_head() -> None:
+    engine = create_engine(_owner_url())
+    with engine.connect() as conn:
+        current = MigrationContext.configure(
+            conn, opts={"version_table_schema": "migrations"}
+        ).get_current_heads()
+    engine.dispose()
+    assert set(current) == set(_script().get_heads())
 
 
 @pytest.mark.db
 @pytest.mark.usefixtures("database")
 def test_four_schemas_exist_and_nothing_in_public() -> None:
-    import psycopg
-
-    from brave.core.config import get_settings
-
-    settings = get_settings()
-    url = migrate._plain_url(settings.migration_database_url or settings.database_url)
+    url = _owner_url().replace("postgresql+psycopg://", "postgresql://", 1)
     with psycopg.connect(url) as conn:
         schemas = {
             r[0]

@@ -9,8 +9,9 @@
   PostgreSQL 16 (Multi-AZ). The same migration files build the RDS database; no data is moved.
 - **Four schemas, none public:** `platform`, `content`, `clinical`, `media`. (The runner keeps
   its own bookkeeping in a separate `migrations` schema.)
-- **Plain numbered SQL migrations** in `db/migrations`, applied by `python -m brave.migrate`.
-  Forward-only; applied files are never edited (the runner checks a SHA-256 checksum).
+- ~~**Plain numbered SQL migrations** in `db/migrations`, applied by `python -m brave.migrate`.
+  Forward-only; applied files are never edited (the runner checks a SHA-256 checksum).~~
+  *Superseded by [ADR 0004](0004-alembic-migrations.md): Alembic migrations.*
 - **Roles:** `brave_owner` owns the schemas and runs migrations; `brave_app` is used by the
   API and worker, with `NOBYPASSRLS`. Created once per environment by `db/bootstrap-roles.sql`.
 - **Row-Level Security** on every tenant table via `platform.enable_tenant_rls(table)`, keyed on

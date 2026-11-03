@@ -8,12 +8,13 @@ planner, content library, form engine, scoring, review and evidence items.
 |---|---|---|
 | API and worker | Python 3.12+, FastAPI, SQLAlchemy 2, uv | `backend/` |
 | Web app | React, TypeScript, Vite, Tailwind CSS | `frontend/` |
-| Database | PostgreSQL 16, plain SQL migrations | `db/` |
+| Database | PostgreSQL 16, Alembic migrations | `backend/migrations/`, `db/` |
 | Infrastructure | AWS Sydney from month 3 (Terraform or CDK, TBC) | `infra/` |
 | Decisions | Architecture decision records | `docs/adr/` |
 
 **Database hosting:** Supabase (Sydney) in months 1–2 with **test data only**, then Amazon RDS
-for PostgreSQL 16 from month 3. See [ADR 0003](docs/adr/0003-database-hosting-and-migrations.md).
+for PostgreSQL 16 from month 3. See [ADR 0003](docs/adr/0003-database-hosting-and-migrations.md)
+and [ADR 0004](docs/adr/0004-alembic-migrations.md).
 
 ## Getting started (macOS)
 
@@ -23,7 +24,7 @@ You need [Docker Desktop](https://www.docker.com/products/docker-desktop/),
 ```bash
 make setup     # install dependencies, create backend/.env
 make db-up     # start PostgreSQL 16 in Docker (creates brave_owner and brave_app roles)
-make migrate   # apply db/migrations
+make migrate   # apply Alembic migrations
 make api       # API on http://localhost:8000  (docs at /docs)
 make web       # in a second terminal: web app on http://localhost:5173
 ```
@@ -39,10 +40,11 @@ backend/src/brave/
   modules/       participants, assessments, content_library, scoring,
                  evidence, audit, notifications
   worker/        background jobs (reports, messages, rescoring, audit export)
-  migrate.py     SQL migration runner
+backend/migrations/
+  env.py         Alembic setup (connects as brave_owner)
+  versions/      0001_baseline.py, 0002_..., applied in order
 db/
   bootstrap-roles.sql   run once per environment
-  migrations/           0001_baseline.sql, 0002_..., applied in order
 frontend/src/    React app
 ```
 
@@ -54,11 +56,15 @@ Module rules (checked in CI by `lint-imports`):
 ## Database rules
 
 - **Four schemas, none public:** `platform`, `content`, `clinical`, `media`.
-- **Every tenant table** has `org_id` and calls `SELECT platform.enable_tenant_rls('schema.table');`
-  in its migration. The API opens each transaction with `org_session(org_id)`, and the
-  `brave_app` role cannot bypass Row-Level Security.
-- **Migrations are forward-only.** Never edit a file that has been applied anywhere: add a new
-  numbered file. The runner refuses to continue if an applied file has changed.
+- **Every tenant table** has `org_id` and calls
+  `op.execute("SELECT platform.enable_tenant_rls('schema.table')")` in its migration. The API
+  opens each transaction with `org_session(org_id)`, and the `brave_app` role cannot bypass
+  Row-Level Security.
+- **Migrations are Alembic revisions**, numbered `0001`, `0002`, ... Create one with
+  `make migration name="add participant"`. `alembic revision --autogenerate` only compares the
+  four schemas, but always read and edit what it generates before committing.
+- **Migrations are forward-only.** Never edit a migration that has been applied anywhere: add a
+  new one. `downgrade()` raises an error on purpose.
 - **IDs are UUIDv7**, generated in the application (`brave.core.ids.new_id`).
 - **Supabase is only a PostgreSQL host.** Don't use Supabase Auth, Storage, Edge Functions,
   its auto-generated API, `auth.uid()`, or make changes in its dashboard.
@@ -70,7 +76,7 @@ Module rules (checked in CI by `lint-imports`):
    `psql "$ADMIN_URL" -v owner_password=... -v app_password=... -f db/bootstrap-roles.sql`
 3. Set `BRAVE_DATABASE_URL` (as `brave_app`) and `BRAVE_MIGRATION_DATABASE_URL` (as
    `brave_owner`) using the **direct or session** connection, not the transaction pooler.
-4. `make migrate`.
+4. `make migrate` (runs `alembic upgrade head`).
 
 Only made-up data ever goes into Supabase.
 
