@@ -11,6 +11,7 @@ Supabase's built-in schemas (auth, storage, ...) are never touched.
 
 from alembic import context
 from sqlalchemy import create_engine, text
+from sqlalchemy.schema import CreateSchema
 
 from brave.core.config import get_settings
 from brave.core.db import Base
@@ -53,7 +54,7 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     engine = create_engine(_url())
     with engine.connect() as connection:
-        connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {VERSION_SCHEMA}"))
+        connection.execute(CreateSchema(VERSION_SCHEMA, if_not_exists=True))
         connection.commit()
 
         context.configure(connection=connection, **_options)
