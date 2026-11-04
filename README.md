@@ -6,7 +6,7 @@ planner, content library, form engine, scoring, review and evidence items.
 
 | Part | Technology | Folder |
 |---|---|---|
-| API and worker | Python 3.12+, FastAPI, SQLAlchemy 2, uv | `backend/` |
+| API and worker | Python 3.14, FastAPI, SQLAlchemy 2, uv | `backend/` |
 | Web app | React, TypeScript, Vite, Tailwind CSS | `frontend/` |
 | Database | PostgreSQL 17, Alembic migrations | `backend/migrations/`, `db/` |
 | Infrastructure | AWS Sydney from month 3 (Terraform or CDK, TBC) | `infra/` |
