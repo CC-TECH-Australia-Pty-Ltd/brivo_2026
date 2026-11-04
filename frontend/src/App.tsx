@@ -36,7 +36,7 @@ export default function App() {
 
   return (
     <main className="mx-auto max-w-md p-8 font-sans text-slate-900">
-      <h1 className="text-2xl font-semibold">Brave Clinical System</h1>
+      <h1 className="text-2xl font-semibold">Brivo Clinical System</h1>
       <p className="mt-1 text-slate-600">Development environment status</p>
       <dl className="mt-6" aria-live="polite">
         <StatusRow name="API" status={api} />

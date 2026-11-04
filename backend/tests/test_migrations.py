@@ -7,8 +7,8 @@ from alembic.runtime.migration import MigrationContext
 from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine
 
-from brave.core.config import get_settings
-from brave.core.ids import new_id
+from brivo.core.config import get_settings
+from brivo.core.ids import new_id
 
 ALEMBIC_INI = Path(__file__).resolve().parents[1] / "alembic.ini"
 

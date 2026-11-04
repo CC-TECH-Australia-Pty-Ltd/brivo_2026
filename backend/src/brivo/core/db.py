@@ -16,7 +16,7 @@ from uuid import UUID
 from sqlalchemy import Engine, MetaData, create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from brave.core.config import get_settings
+from brivo.core.config import get_settings
 
 # Predictable constraint names, so Alembic migrations can refer to them.
 NAMING_CONVENTION = {

@@ -24,20 +24,20 @@ jobs:
     # Throwaway PostgreSQL for tests. Never the shared Supabase or RDS database.
     services:
       db:
-        image: postgres:16
+        image: postgres:17
         env:
-          POSTGRES_DB: brave
+          POSTGRES_DB: brivo
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U postgres -d brave"
+          --health-cmd "pg_isready -U postgres -d brivo"
           --health-interval 2s --health-timeout 3s --health-retries 20
 
     env:
-      BRAVE_ENVIRONMENT: test
-      BRAVE_DATABASE_URL: postgresql+psycopg://brave_app:brave_app@localhost:5432/brave
-      BRAVE_MIGRATION_DATABASE_URL: postgresql+psycopg://brave_owner:brave_owner@localhost:5432/brave
+      BRIVO_ENVIRONMENT: test
+      BRIVO_DATABASE_URL: postgresql+psycopg://brivo_app:brivo_app@localhost:5432/brivo
+      BRIVO_MIGRATION_DATABASE_URL: postgresql+psycopg://brivo_owner:brivo_owner@localhost:5432/brivo
 
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
 
       - name: Create database roles
         working-directory: .
-        run: PGPASSWORD=postgres psql -h localhost -U postgres -d brave -f db/bootstrap-roles.sql
+        run: PGPASSWORD=postgres psql -h localhost -U postgres -d brivo -f db/bootstrap-roles.sql
 
       - name: Migrations on an empty database
         run: |
