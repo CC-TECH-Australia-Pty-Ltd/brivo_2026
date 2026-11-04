@@ -13,12 +13,12 @@ still to do. Update this file in the same pull request that changes a control.
 | Migrations tested on an empty PostgreSQL 17 in CI | ✅ | `ci.yml` → "Migrations on an empty database" |
 | Only one migration head allowed | ✅ | `ci.yml` → "Single migration head" |
 | SQL of new migrations shown on the PR before merge | ✅ | `ci.yml` → "Migration preview" |
-| Secret scanning (gitleaks) | ✅ | `.github/workflows/security.yml` → `secrets` |
+| Secret scanning of full git history (gitleaks CLI, values redacted; fails if nothing was scanned) | ✅ | `.github/workflows/security.yml` → `secrets` |
 | Code scanning incl. OWASP Top 10 rules (Semgrep) | ✅ | `security.yml` → `code` (`p/owasp-top-ten`) |
 | Dependency and config scanning (Trivy), weekly as well as per PR | ✅ | `security.yml` → `dependencies` |
 | Dependency updates with a 7-day cooldown | ✅ | `.github/dependabot.yml` |
 | GitHub Actions pinned to commit SHAs | ✅ | all workflows (`uses: …@<sha> # vX`) |
-| CI container images pinned by digest | ✅ | `security.yml` Semgrep image; bump by hand, Dependabot does not cover it |
+| CI container images pinned by digest | ✅ | `security.yml` Semgrep and gitleaks images; bump by hand, Dependabot does not cover them |
 | Workflow inputs passed via `env:`, not inlined into scripts | ✅ | `ci.yml` "Migration preview" (`BASE_REF`) |
 | Supabase migrations need a person to approve | ✅ | `.github/workflows/migrate.yml` (manual run on `main`, typed `migrate`) |
 | Migration secret only usable by the migrate job | ⏳ | Needs GitHub environments (paid plan / organisation) |
