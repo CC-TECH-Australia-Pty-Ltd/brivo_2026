@@ -1,7 +1,7 @@
 # Local development database. Same PostgreSQL major version as production (RDS).
 services:
   db:
-    image: postgres:16
+    image: postgres:17
     environment:
       POSTGRES_DB: brivo
       POSTGRES_USER: postgres

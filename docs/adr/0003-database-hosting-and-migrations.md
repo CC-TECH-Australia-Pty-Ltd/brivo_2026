@@ -4,9 +4,9 @@
 
 ## Decision
 
-- **PostgreSQL 16** throughout, hosted in Sydney.
+- **PostgreSQL 17** throughout, hosted in Sydney.
 - **Months 1-2:** Supabase (Sydney), **test data only**. **Month 3 onward:** Amazon RDS for
-  PostgreSQL 16 (Multi-AZ). The same migration files build the RDS database; no data is moved.
+  PostgreSQL 17 (Multi-AZ). The same migration files build the RDS database; no data is moved.
 - **Four schemas, none public:** `platform`, `content`, `clinical`, `media`. (The runner keeps
   its own bookkeeping in a separate `migrations` schema.)
 - ~~**Plain numbered SQL migrations** in `db/migrations`, applied by `python -m brivo.migrate`.
@@ -25,5 +25,10 @@ Supabase-specific features (Auth, Storage, `auth.uid()`, its built-in roles) mus
 
 ## Open
 
-Supabase's Postgres version must be checked against 16 when the project is created.
+~~Supabase's Postgres version must be checked against 16 when the project is created.~~
+*Resolved 2026-11-04:* the Supabase brivo project runs PostgreSQL 17.11, so local, CI, Supabase
+and RDS all move to PostgreSQL 17. Approved by CC Tech, 2026-11-04.
+
 CC Tech has not yet confirmed Supabase for months 1-2 (v0.3 plan section 9.5 is AWS only).
+
+

@@ -24,7 +24,7 @@ jobs:
     # Throwaway PostgreSQL for tests. Never the shared Supabase or RDS database.
     services:
       db:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_DB: brivo
           POSTGRES_USER: postgres

@@ -8,12 +8,12 @@ planner, content library, form engine, scoring, review and evidence items.
 |---|---|---|
 | API and worker | Python 3.12+, FastAPI, SQLAlchemy 2, uv | `backend/` |
 | Web app | React, TypeScript, Vite, Tailwind CSS | `frontend/` |
-| Database | PostgreSQL 16, Alembic migrations | `backend/migrations/`, `db/` |
+| Database | PostgreSQL 17, Alembic migrations | `backend/migrations/`, `db/` |
 | Infrastructure | AWS Sydney from month 3 (Terraform or CDK, TBC) | `infra/` |
 | Decisions | Architecture decision records | `docs/adr/` |
 
 **Database hosting:** Supabase (Sydney) in months 1–2 with **test data only**, then Amazon RDS
-for PostgreSQL 16 from month 3. See [ADR 0003](docs/adr/0003-database-hosting-and-migrations.md)
+for PostgreSQL 17 from month 3. See [ADR 0003](docs/adr/0003-database-hosting-and-migrations.md)
 and [ADR 0004](docs/adr/0004-alembic-migrations.md).
 
 ## Getting started (macOS)
@@ -23,7 +23,7 @@ You need [Docker Desktop](https://www.docker.com/products/docker-desktop/),
 
 ```bash
 make setup     # install dependencies, create backend/.env
-make db-up     # start PostgreSQL 16 in Docker (creates brivo_owner and brivo_app roles)
+make db-up     # start PostgreSQL 17 in Docker (creates brivo_owner and brivo_app roles)
 make migrate   # apply Alembic migrations
 make api       # API on http://localhost:8000  (docs at /docs)
 make web       # in a second terminal: web app on http://localhost:5173
@@ -71,7 +71,7 @@ Module rules (checked in CI by `lint-imports`):
 
 ### Connecting to Supabase (months 1–2)
 
-1. Create the project in the **Sydney** region and check it runs **PostgreSQL 16**.
+1. Create the project in the **Sydney** region and check it runs **PostgreSQL 17**.
 2. Using the admin connection string, run once:
    `psql "$ADMIN_URL" -v owner_password=... -v app_password=... -f db/bootstrap-roles.sql`
 3. Set `BRIVO_DATABASE_URL` (as `brivo_app`) and `BRIVO_MIGRATION_DATABASE_URL` (as
@@ -96,7 +96,7 @@ Only made-up data ever goes into Supabase.
 ## Continuous integration
 
 Every pull request runs:
-- **CI:** backend lint, format, types, module boundaries, migrations on an empty PostgreSQL 16,
+- **CI:** backend lint, format, types, module boundaries, migrations on an empty PostgreSQL 17,
   tests (including tenant isolation); frontend lint and build.
 - **Security:** secret scanning (gitleaks), code scanning (Semgrep), dependency scanning (Trivy).
 - **Dependabot** opens weekly update pull requests.
