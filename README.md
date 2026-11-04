@@ -78,6 +78,11 @@ Module rules (checked in CI by `lint-imports`):
    `brivo_owner`) using the **direct or session** connection, not the transaction pooler.
 4. `make migrate` (runs `alembic upgrade head`).
 
+After this one-time setup, later migrations reach Supabase through GitHub Actions instead:
+review the SQL in the PR's **Migration preview** step, merge to `main`, then run
+**Actions → Migrate database → Run workflow** on `main` and type `migrate` to approve. It needs
+the repository secret `BRIVO_MIGRATION_DATABASE_URL` (as `brivo_owner`, session pooler).
+
 **Databases created before the rename to Brivo** still have the old `brave_owner` and
 `brave_app` roles. Rename them once as the admin (grants and ownership follow the role), then
 reset the passwords, since renaming clears an MD5 password:
