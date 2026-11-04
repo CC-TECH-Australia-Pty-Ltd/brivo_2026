@@ -81,7 +81,8 @@ Module rules (checked in CI by `lint-imports`):
 After this one-time setup, later migrations reach Supabase through GitHub Actions instead:
 review the SQL in the PR's **Migration preview** step, merge to `main`, then run
 **Actions → Migrate database → Run workflow** on `main` and type `migrate` to approve. It needs
-the repository secret `BRIVO_MIGRATION_DATABASE_URL` (as `brivo_owner`, session pooler).
+one repository secret, `BRIVO_OWNER_PASSWORD` (the `brivo_owner` password); the workflow builds
+the Session pooler URL itself. If the password changes in Supabase, update the secret too.
 
 **Databases created before the rename to Brivo** still have the old `brave_owner` and
 `brave_app` roles. Rename them once as the admin (grants and ownership follow the role), then

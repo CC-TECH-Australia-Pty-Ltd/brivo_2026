@@ -63,6 +63,6 @@ still to do. Update this file in the same pull request that changes a control.
 | Item | Status | Notes |
 |---|---|---|
 | Repository owned by a GitHub organisation with required 2FA | 🏢 | Currently a personal account (`CC-Tech2026`) |
-| `BRIVO_MIGRATION_DATABASE_URL` repository secret | 🏢 | Needs a repo admin |
+| `BRIVO_OWNER_PASSWORD` repository secret (migrate workflow builds the URL from it) | 🏢 | Needs a repo admin |
 | Unused `SUPABASE_*` repository secrets removed (incl. `SUPABASE_SECRET_KEY`) | 🏢 | Nothing uses them |
 | Database passwords only in the password manager and secret stores | ✅ | Never in the repo, chat or shell history |

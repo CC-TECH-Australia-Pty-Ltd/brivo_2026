@@ -1,6 +1,9 @@
 # Applies pending Alembic migrations to the Supabase brivo database.
 # Manual approval: someone must press "Run workflow" on main and type "migrate".
 # Review the SQL in the PR's "Migration preview" step before running this.
+#
+# Only the brivo_owner password is secret (repository secret BRIVO_OWNER_PASSWORD);
+# the workflow builds the connection URL from it and the fixed values below.
 name: Migrate database
 
 on:
@@ -26,15 +29,31 @@ jobs:
       run:
         working-directory: backend
     env:
-      BRIVO_MIGRATION_DATABASE_URL: ${{ secrets.BRIVO_MIGRATION_DATABASE_URL }}
+      # Not secret: the brivo project ref and its Session pooler host (port 5432).
+      SUPABASE_PROJECT_REF: qpdnxbcswooriklxboyv
+      SUPABASE_POOLER_HOST: aws-0-ap-southeast-2.pooler.supabase.com
+      BRIVO_OWNER_PASSWORD: ${{ secrets.BRIVO_OWNER_PASSWORD }}
     steps:
-      - name: Check the database secret is set
+      - name: Check the password secret is set
         working-directory: .
         run: |
-          if [ -z "$BRIVO_MIGRATION_DATABASE_URL" ]; then
-            echo "::error::Repository secret BRIVO_MIGRATION_DATABASE_URL is not set."
+          if [ -z "$BRIVO_OWNER_PASSWORD" ]; then
+            echo "::error::Repository secret BRIVO_OWNER_PASSWORD is not set."
             exit 1
           fi
+
+      - name: Build the database URL
+        working-directory: .
+        run: |
+          url=$(python3 -c '
+          import os, urllib.parse
+          ref = os.environ["SUPABASE_PROJECT_REF"]
+          host = os.environ["SUPABASE_POOLER_HOST"]
+          password = urllib.parse.quote(os.environ["BRIVO_OWNER_PASSWORD"], safe="")
+          print(f"postgresql+psycopg://brivo_owner.{ref}:{password}@{host}:5432/postgres?sslmode=require")
+          ')
+          echo "::add-mask::$url"
+          echo "BRIVO_MIGRATION_DATABASE_URL=$url" >> "$GITHUB_ENV"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
