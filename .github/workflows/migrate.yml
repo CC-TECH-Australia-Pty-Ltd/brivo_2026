@@ -1,0 +1,53 @@
+# Applies pending Alembic migrations to the Supabase brivo database.
+# Manual approval: someone must press "Run workflow" on main and type "migrate".
+# Review the SQL in the PR's "Migration preview" step before running this.
+name: Migrate database
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "migrate" to apply pending migrations to Supabase'
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-supabase
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: Alembic upgrade (Supabase)
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'migrate'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      BRIVO_MIGRATION_DATABASE_URL: ${{ secrets.BRIVO_MIGRATION_DATABASE_URL }}
+    steps:
+      - name: Check the database secret is set
+        working-directory: .
+        run: |
+          if [ -z "$BRIVO_MIGRATION_DATABASE_URL" ]; then
+            echo "::error::Repository secret BRIVO_MIGRATION_DATABASE_URL is not set."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync --locked --no-dev
+
+      - name: Before
+        run: uv run alembic current
+
+      - name: Apply
+        run: uv run alembic upgrade head
+
+      - name: After
+        run: uv run alembic current
