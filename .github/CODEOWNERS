@@ -1,9 +1,9 @@
 # Who must review changes to which files. Replace the placeholders with real
-# GitHub usernames or a team (e.g. @cc-tech/brave-leads), then uncomment.
+# GitHub usernames or a team (e.g. @cc-tech/brivo-leads), then uncomment.
 #
 # The database plan requires two reviewers for row-level security changes:
 # set "Require review from Code Owners" and "2 approvals" in branch protection.
 #
 # /db/                         @lead-developer @second-reviewer
-# /backend/src/brave/core/     @lead-developer
+# /backend/src/brivo/core/     @lead-developer
 # /.github/                    @lead-developer

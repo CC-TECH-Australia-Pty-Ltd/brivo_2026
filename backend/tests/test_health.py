@@ -2,8 +2,8 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
 
-from brave import __version__
-from brave.core import db
+from brivo import __version__
+from brivo.core import db
 
 
 def test_health(client: TestClient) -> None:

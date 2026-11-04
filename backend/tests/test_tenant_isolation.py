@@ -7,9 +7,9 @@ import psycopg
 import pytest
 from sqlalchemy import text
 
-from brave.core.config import get_settings
-from brave.core.db import org_session
-from brave.core.ids import new_id
+from brivo.core.config import get_settings
+from brivo.core.db import org_session
+from brivo.core.ids import new_id
 
 pytestmark = [pytest.mark.db, pytest.mark.usefixtures("database")]
 

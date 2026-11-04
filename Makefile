@@ -31,7 +31,7 @@ migration: ## Create the next numbered migration: make migration name="add parti
 	$(BACKEND) uv run alembic revision -m "$(name)" --rev-id "$$(uv run python -c 'from alembic.config import Config; from alembic.script import ScriptDirectory; h = ScriptDirectory.from_config(Config("alembic.ini")).get_current_head(); print(f"{int(h or 0) + 1:04d}")')"
 
 api: ## Run the API with auto-reload on http://localhost:8000
-	$(BACKEND) uv run uvicorn brave.main:app --reload
+	$(BACKEND) uv run uvicorn brivo.main:app --reload
 
 web: ## Run the React app on http://localhost:5173
 	cd frontend && npm run dev
