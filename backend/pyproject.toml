@@ -3,7 +3,7 @@ name = "brivo-clinical-system"
 version = "0.1.0"
 description = "Brivo Clinical System - API and worker (Stage 1)"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
@@ -18,7 +18,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8.3",
-    "httpx>=0.27",
+    "httpx2>=2.16",
     "ruff>=0.6",
     "mypy>=1.11",
     "import-linter>=2.1",
@@ -34,7 +34,7 @@ packages = ["src/brivo"]
 # ---------- Lint and format ----------
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py314"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -44,7 +44,7 @@ ignore = ["S101"] # assert is fine in tests
 
 # ---------- Types ----------
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 strict = true
 mypy_path = "src"
 packages = ["brivo"]
