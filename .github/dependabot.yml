@@ -1,15 +1,19 @@
-# Weekly pull requests to keep dependencies up to date.
+# Weekly pull requests to keep dependencies up to date. New releases wait a
+# cooldown before being proposed, so a malicious version that is pulled within
+# days never reaches us. Security updates are not delayed.
 version: 2
 updates:
   - package-ecosystem: uv
     directory: /backend
     schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
     groups:
       python-minor: { update-types: [minor, patch] }
 
   - package-ecosystem: npm
     directory: /frontend
     schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
     groups:
       npm-minor: { update-types: [minor, patch] }
     ignore:
@@ -20,7 +24,9 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
 
   - package-ecosystem: docker
     directory: /
     schedule: { interval: monthly }
+    cooldown: { default-days: 7 }
