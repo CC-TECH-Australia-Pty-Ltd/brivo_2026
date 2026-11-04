@@ -69,6 +69,29 @@ jobs:
           uv run alembic upgrade head
           uv run alembic current
 
+      - name: Single migration head
+        run: test "$(uv run alembic heads | wc -l)" -eq 1
+
+      - name: Migration preview (SQL that main would run)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --quiet --depth=1 origin "$BASE_REF"
+          prev=$(git ls-tree --full-tree --name-only FETCH_HEAD backend/migrations/versions/ \
+            | sed -n 's#.*/\([0-9]\{4\}\)_[^/]*\.py$#\1#p' | sort | tail -n 1)
+          head=$(uv run alembic heads | awk '{print $1}')
+          if [ "$prev" = "$head" ]; then
+            echo "No new migrations in this PR." >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "## Migration SQL (${prev:-empty} → $head)"
+              echo '```sql'
+              uv run alembic upgrade "${prev:+$prev:}$head" --sql
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Tests (including tenant isolation)
         run: uv run pytest
 
