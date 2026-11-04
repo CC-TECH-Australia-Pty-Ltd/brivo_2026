@@ -103,7 +103,15 @@ Only made-up data ever goes into Supabase.
 Every pull request runs:
 - **CI:** backend lint, format, types, module boundaries, migrations on an empty PostgreSQL 17,
   tests (including tenant isolation); frontend lint and build.
-- **Security:** secret scanning (gitleaks), code scanning (Semgrep), dependency scanning (Trivy).
-- **Dependabot** opens weekly update pull requests.
+- **Security:** secret scanning (gitleaks), code scanning (Semgrep, including OWASP Top 10
+  rules), dependency scanning (Trivy).
+- **Dependabot** opens weekly update pull requests, after a 7-day cooldown.
 
 Deployment workflows will be added once hosting for months 1–2 is confirmed.
+
+## Security
+
+Brivo is built to OWASP ASVS Level 2 and the ACSC Essential Eight (ML2 proposed). See
+[SECURITY.md](SECURITY.md) for how to report a vulnerability and the team's rules,
+[ADR 0005](docs/adr/0005-security-baseline.md) for the baseline, and
+[docs/security/checklist.md](docs/security/checklist.md) for what is done and what is left.
