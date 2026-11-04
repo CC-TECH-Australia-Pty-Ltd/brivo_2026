@@ -116,7 +116,7 @@ wheels = [
 ]
 
 [[package]]
-name = "brave-clinical-system"
+name = "brivo-clinical-system"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

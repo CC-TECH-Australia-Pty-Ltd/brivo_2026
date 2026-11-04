@@ -1,7 +1,7 @@
 """Alembic environment.
 
-Connects as the schema owner (BRAVE_MIGRATION_DATABASE_URL, falling back to
-BRAVE_DATABASE_URL) and applies all pending revisions in one transaction. The same
+Connects as the schema owner (BRIVO_MIGRATION_DATABASE_URL, falling back to
+BRIVO_DATABASE_URL) and applies all pending revisions in one transaction. The same
 revisions run unchanged on local Postgres, Supabase (testing only) and Amazon RDS.
 
 Alembic's own bookkeeping table lives in the ``migrations`` schema, so ``public``
@@ -13,8 +13,8 @@ from alembic import context
 from sqlalchemy import create_engine, text
 from sqlalchemy.schema import CreateSchema
 
-from brave.core.config import get_settings
-from brave.core.db import Base
+from brivo.core.config import get_settings
+from brivo.core.db import Base
 
 APP_SCHEMAS = {"platform", "content", "clinical", "media"}
 VERSION_SCHEMA = "migrations"

@@ -2,8 +2,8 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import OperationalError
 
-from brave.core import db
-from brave.main import create_app
+from brivo.core import db
+from brivo.main import create_app
 
 
 @pytest.fixture

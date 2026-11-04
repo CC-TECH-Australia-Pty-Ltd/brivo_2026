@@ -7,16 +7,16 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="BRAVE_", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="BRIVO_", extra="ignore")
 
     environment: Literal["local", "test", "staging", "production"] = "local"
 
     # Plain PostgreSQL connection string. Works the same for local Docker,
     # Supabase in months 1-2 (test data only) and AWS RDS from month 3.
     # The API connects as a low-privilege role that cannot bypass Row-Level Security.
-    database_url: str = "postgresql+psycopg://brave_app:brave_app@localhost:5432/brave"
+    database_url: str = "postgresql+psycopg://brivo_app:brivo_app@localhost:5432/brivo"
 
-    # Migrations connect as the schema owner (brave_owner). Falls back to database_url.
+    # Migrations connect as the schema owner (brivo_owner). Falls back to database_url.
     migration_database_url: str | None = None
 
     # Origins allowed to call the API from a browser (the React app).

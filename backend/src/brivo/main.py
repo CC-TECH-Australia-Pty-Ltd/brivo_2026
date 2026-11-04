@@ -1,21 +1,21 @@
 """FastAPI application entry point.
 
-Run locally with:  uv run uvicorn brave.main:app --reload
+Run locally with:  uv run uvicorn brivo.main:app --reload
 """
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
-from brave import __version__
-from brave.core import db
-from brave.core.config import get_settings
+from brivo import __version__
+from brivo.core import db
+from brivo.core.config import get_settings
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="Brave Clinical System API",
+        title="Brivo Clinical System API",
         version=__version__,
         # Interactive docs only outside production.
         docs_url=None if settings.environment == "production" else "/docs",

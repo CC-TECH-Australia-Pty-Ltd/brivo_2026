@@ -5,7 +5,7 @@
 ## Decision
 
 - Schema changes are **Alembic** revisions in `backend/migrations/versions`, applied with
-  `alembic upgrade head` (`make migrate`) as `brave_owner`. They run against Supabase while it
+  `alembic upgrade head` (`make migrate`) as `brivo_owner`. They run against Supabase while it
   is the test database (months 1-2) and against Amazon RDS from month 3.
 - Revisions are **numbered** `0001`, `0002`, ... in a single line (`make migration name="..."`).
   CI fails if two revisions share a parent.
