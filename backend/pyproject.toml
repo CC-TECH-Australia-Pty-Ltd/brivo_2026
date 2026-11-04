@@ -12,6 +12,7 @@ dependencies = [
     "uuid-utils>=0.9",
     "pydantic>=2.8",
     "pydantic-settings>=2.4",
+    "alembic>=1.14",
 ]
 
 [dependency-groups]
